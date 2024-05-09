@@ -1,0 +1,85 @@
+---
+- name: Generate
+  hosts: sw
+  connection: network_cli
+  gather_facts: false
+  vars_files:
+    - secret4.yml
+  
+  collections:
+    - community.network
+
+
+  tasks:
+    - name: Create a file new3_file.txt and push to GitHub
+      block:
+        - name: Show config
+          community.network.exos_command:
+            commands: show config
+          register: config
+
+        - name: SAVE OUTPUT TO ./backups/
+          copy:
+            content: "{{ config.stdout[0] }}"
+            dest: "/tmp/{{ inventory_hostname }}.txt"
+          delegate_to: localhost
+          become: false
+
+        - name: Add exception for /tmp directory in Git
+          command: git config --global --add safe.directory /tmp
+          when: not ansible_check_mode
+          run_once: true
+          delegate_to: localhost
+
+        - name: Clone the existing GitHub repository
+          args: 
+            chdir: /tmp
+          command: git clone https://github.com/shezanhossain2/Backups_Exos.git
+          run_once: true
+          delegate_to: localhost
+
+        - name: Get current date and time
+          command: date '+%Y_%m_%d@%H_%M_%S'
+          register: datetime_result
+          run_once: true
+
+        - name: create directory
+          file :
+            path: /tmp/Backups_Exos/{{ datetime_result.stdout }}
+            state: directory
+          run_once: true
+          delegate_to: localhost
+
+        - name: Copy new3_file.txt to sw.txt
+          command: cp /tmp/{{ inventory_hostname }}.txt /tmp/Backups_Exos/{{ datetime_result.stdout }}/
+          changed_when: false
+          when: not ansible_check_mode
+          delegate_to: localhost
+
+        - name: git init and add origin 
+          ignore_errors: true
+          shell: "{{ item }}"
+          args: 
+            chdir: /tmp/Backups_Exos
+          loop: 
+            - git init
+            - git branch -M master
+            - git remote add origin https://{{token_key}}@github.com/{{user_name}}/Backups_Exos.git
+          delegate_to: localhost
+          run_once: true
+
+        - name: push to git
+          ignore_errors: true
+          shell: "{{ item }}"
+          args: 
+            chdir: /tmp/Backups_Exos
+          loop: 
+            - git config --global user.name "shezanhossain2"
+            - git config --global user.email hossainmahmudshezan@gmail.com
+            - git add *
+            - git commit -m "{{ datetime_result.stdout }}"     
+            - git remote set-url origin https://{{token_key}}@github.com/{{user_name}}/Backups_Exos
+            - git push origin master
+          delegate_to: localhost
+          become: false
+          run_once: true
