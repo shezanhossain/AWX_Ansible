@@ -38,6 +38,6 @@
 
     - name: Restore configuration on EXOS switch
       community.network.exos_config:
-        src: /tmp/Backups_Exos/{{ latest_file }}/sw1.txt
+        src: "{{ latest_file }}/sw1.txt"
         diff_against: running
         save_when: modified
