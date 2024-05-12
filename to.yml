@@ -22,6 +22,5 @@
         - name: Restore configuration
           community.network.exos_config:
             src: /tmp/Backups_Exos/2024_03_14@14_45_29/sw1.txt
-            replace: block
             save_when: modified
 
