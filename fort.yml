@@ -16,21 +16,17 @@
           args: 
             chdir: /tmp
           command: git clone https://github.com/shezanhossain2/Backups_Exos.git
+
           run_once: true
           delegate_to: localhost
 
-        - name: Get files in a folder
-          find:
-            paths: "/tmp/Backups_Exos/"
-          register: found_files
-
-        - name: Get latest file
-          set_fact:
-            latest_file: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+        - name: List letencrypt certificate directory
+          command: ls -t1 /tmp/Backups_Exos
+          register: certificates
 
 
         - name: Restore configuration
           community.network.exos_config:
             replace: 
-              src: /tmp/Backups_Exos/{{latest_file}}/sw1.txt
+              src: /tmp/Backups_Exos/{{certificates.stdout_lines[0]}}/sw1.txt
             save_when: modified
