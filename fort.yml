@@ -31,9 +31,7 @@
           run_once: true
  
         - name: Restore configuration
-          community.network.exos_config:
-            replace: 
-              src: /tmp/Backups_Exos/{{latest_directory}}/sw1.txt
-            save_when: modified
-
-sss
+          debug: 
+            msg: 
+              - >-
+                {{latest_directory}}
