@@ -21,12 +21,12 @@
           delegate_to: localhost
 
         - name: List letencrypt certificate directory
-          command: ls -t1 /tmp/Backups_Exos
+          command: ls -t1 /tmp/Backups_Exos/
           register: certificates
 
 
         - name: Restore configuration
           community.network.exos_config:           
-            src: /tmp/Backups_Exos/{{certificates.stdout_lines[0]}}/sw1.txt
+            src: /tmp/Backups_Exos/{{ certificates.stdout_lines[0] }}/sw1.txt
             diff_against: running
             save_when: modified

@@ -9,6 +9,8 @@
     - community.network
 
 
+
+
   tasks:
     - name: Create a file new3_file.txt and push to GitHub
       block:
@@ -16,24 +18,26 @@
           args: 
             chdir: /tmp
           command: git clone https://github.com/shezanhossain2/Backups_Exos.git
+
           run_once: true
           delegate_to: localhost
 
-        - name: git init and add origin 
-          ignore_errors: true
-          shell: "{{ item }}"
-          args: 
-            chdir: /tmp/Backups_Exos
-          loop: 
-            - ls -Art | grep '/' | tail -n 1
-          register: latest_directory
-          delegate_to: localhost
-          run_once: true
- 
-        - name: Restore configuration
-          community.network.exos_config:
-            replace: 
-              src: /tmp/Backups_Exos/{{latest_directory}}/sw1.txt
-            save_when: modified
+    - name: Get files in a folder
+      ansible.builtin.find:
+        paths: "/tmp/Backups_Exos"
+        file_type: directory
+      register: found_files
 
-sss
+    - name: Get latest file
+      set_fact:
+        latest_file: "{{ (found_files.files | sort(attribute='mtime') | last).path }}"
+
+    - name: Debug latest file
+      ansible.builtin.debug:
+        msg: "The latest configuration file is {{ latest_file }}"
+
+    - name: Restore configuration on EXOS switch
+      community.network.exos_config:
+        src: /tmp/Backups_Exos/{{ latest_file }}/sw1.txt
+        diff_against: running
+        save_when: modified
