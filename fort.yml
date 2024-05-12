@@ -19,19 +19,19 @@
           run_once: true
           delegate_to: localhost
 
-        - name: git init and add origin 
-          ignore_errors: true
-          shell: "{{ item }}"
-          args: 
-            chdir: /tmp/Backups_Exos
-          loop: 
-            - ls -td -- */ | head -n 1 | cut -d'/' -f1
-          register: latest_directory
-          delegate_to: localhost
-          run_once: true
- 
+
+        - name: Get files in a folder
+          find:
+          paths: "/tmp/Backups_Exos/"
+          register: found_files
+
+        - name: Get latest file
+          set_fact:
+            latest_file: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+
+
         - name: Restore configuration
           community.network.exos_config:
             replace: 
-              src: /tmp/Backups_Exos/{{ latest_directory }}/sw1.txt
+              src: /tmp/Backups_Exos/{{latest_file}}/sw1.txt
             save_when: modified
