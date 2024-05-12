@@ -21,7 +21,7 @@
         - name: SAVE OUTPUT TO ./backups/
           copy:
             content: "{{ config.stdout[0] }}"
-            dest: "/tmp/{{ inventory_hostname }}.txt"
+            dest: "/tmp/{{ inventory_hostname }}.cfg"
           delegate_to: localhost
           become: false
 
