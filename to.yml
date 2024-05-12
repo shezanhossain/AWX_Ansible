@@ -34,10 +34,10 @@
 
     - name: Debug latest file
       ansible.builtin.debug:
-        msg: "The latest configuration file is {{ latest_file }}"
+        msg: "The latest configuration file is {{ latest_file }}/sw1.txt"
 
     - name: Restore configuration on EXOS switch
       community.network.exos_config:
-        src: "{{ latest_file }}/sw1.txt"
+        src: {{ latest_file }}/sw1.txt
         diff_against: running
         save_when: modified
