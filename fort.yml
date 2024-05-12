@@ -26,7 +26,7 @@
 
 
         - name: Restore configuration
-          community.network.exos_config:
-            replace: 
-              src: /tmp/Backups_Exos/{{certificates.stdout_lines[0]}}/sw1.txt
+          community.network.exos_config:           
+            src: /tmp/Backups_Exos/{{certificates.stdout_lines[0]}}/sw1.txt
+            diff_against: running
             save_when: modified
