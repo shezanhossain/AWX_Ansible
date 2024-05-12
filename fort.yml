@@ -19,10 +19,9 @@
           run_once: true
           delegate_to: localhost
 
-
         - name: Get files in a folder
           find:
-          paths: "/tmp/Backups_Exos/"
+            paths: "/tmp/Backups_Exos/"
           register: found_files
 
         - name: Get latest file
