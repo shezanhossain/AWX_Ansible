@@ -50,8 +50,8 @@
           run_once: true
           delegate_to: localhost
 
-        - name: Copy new3_file.txt to sw.txt
-          command: cp /tmp/{{ inventory_hostname }}.txt /tmp/Backups_Exos/{{ datetime_result.stdout }}/
+        - name: Copy new3_file.txt to sw.cfg
+          command: cp /tmp/{{ inventory_hostname }}.cfg /tmp/Backups_Exos/{{ datetime_result.stdout }}/
           changed_when: false
           when: not ansible_check_mode
           delegate_to: localhost
