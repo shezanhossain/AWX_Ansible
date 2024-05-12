@@ -1,7 +1,7 @@
 
 ---
 - name: Generate
-  hosts: sw
+  hosts: all
   connection: network_cli
   gather_facts: false
   vars_files:
@@ -14,77 +14,15 @@
   tasks:
     - name: Create a file new3_file.txt and push to GitHub
       block:
-
         - name: Clone the existing GitHub repository
           args: 
             chdir: /tmp
-          command: git clone https://github.com/shezanhossain2/Backups_Exos.git
+          command: git clone https://github.com/shezanhossain2/Backups_Exos/.git
           run_once: true
           delegate_to: localhost
-              
-              
-        - name: Display all directories
-          ansible.builtin.debug:
-            msg: "{{ repo_directories.files | map(attribute='path') | list }}"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#####################
-
----
-- name: Restore EXOS switch configurations from GitHub
-  hosts: switches
-  gather_facts: no
-  vars:
-    repo_url: 'https://github.com/yourusername/your-repo.git'
-    local_repo_path: '/tmp/config_repo'
-    ansible_ssh_user: 'admin'
-
-  tasks:
-    - name: Ensure git is installed
-      ansible.builtin.package:
-        name: git
-        state: present
-
-    - name: Clone the repository containing the configurations
-      ansible.builtin.git:
-        repo: "{{ repo_url }}"
-        dest: "{{ local_repo_path }}"
-        clone: yes
-        update: yes
-
-    - name: Find the latest directory
-      ansible.builtin.find:
-        paths: "{{ local_repo_path }}"
-        file_type: directory
-      register: folders
-
-    - name: Set latest folder path
-      set_fact:
-        latest_folder: "{{ folders.files | sort(attribute='mtime', reverse=True) | map(attribute='path') | first }}"
-
-    - name: Restore configuration on switches
-      ansible.builtin.command:
-        cmd: "exsh -c 'load script {{ latest_folder }}/{{ inventory_hostname }}.cfg'"
-      when: ansible_host == inventory_hostname
-      delegate_to: localhost
+        - name: Restore IOS-XE configuration
+          ansible.netcommon.cli_restore:
+            filename: /tmp/Backups_Exos/2024_05_12@19_55_21/sw1.cfg
+            path: flash://
+            when: inventory_hostname == 'sw1'
