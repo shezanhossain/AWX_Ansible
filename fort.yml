@@ -26,10 +26,10 @@
 
         - name: Debug latest file
           ansible.builtin.debug:
-            msg: "The latest configuration file is {{certificates.stdout_lines[0]}}/sw1.txt"
+            msg: "The latest configuration file is {{ latest_file }}/sw1.txt"
 
         - name: Restore configuration
           community.network.exos_config:           
-            src: "{{ certificates.stdout_lines[0] }}/sw1.txt"
+            src: "/tmp/Backups_Exos/{{ certificates.stdout_lines[0] }}/sw1.txt"
             diff_against: running
             save_when: modified
