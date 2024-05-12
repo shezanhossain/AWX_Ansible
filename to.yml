@@ -15,7 +15,7 @@
         - name: Clone the existing GitHub repository
           args: 
             chdir: /tmp
-          command: git clone https://github.com/shezanhossain2/Backups_Exos/.git
+          command: git clone https://github.com/shezanhossain2/Backups_Exos.git
           run_once: true
           delegate_to: localhost
 
