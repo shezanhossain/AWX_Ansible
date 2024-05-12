@@ -30,8 +30,3 @@
           delegate_to: localhost
           run_once: true
  
-        - name: Restore configuration
-          debug: 
-            msg: 
-              - >-
-                {{latest_directory}}
