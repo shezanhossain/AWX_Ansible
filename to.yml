@@ -19,8 +19,9 @@
           run_once: true
           delegate_to: localhost
 
-        - name: Restore IOS-XE configuration
-          ansible.netcommon.cli_restore:
-            filename: /tmp/Backups_Exos/2024_05_12@19_55_21/sw1.cfg
-            path: flash://
-            when: inventory_hostname == 'sw1'
+        - name: Restore configuration
+          community.network.exos_config:
+            src: /tmp/Backups_Exos/2024_03_14@14_45_29/sw1.txt
+            diff_against: startup
+            save_when: modified
+
