@@ -12,5 +12,5 @@
       block:
         - name: Show config
           community.network.exos_command:
-            commands: show config
+            commands: show process cli 
       any_errors_fatal: true
