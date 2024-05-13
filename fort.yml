@@ -16,15 +16,11 @@
           args: 
             chdir: /tmp
           command: git clone https://github.com/shezanhossain2/Backups_Exos.git
-
           run_once: true
           delegate_to: localhost
 
         - name: List letencrypt certificate directory
-#          command: ls -t1 /tmp/Backups_Exos/
-          args: 
-            chdir: /tmp/Backups_Exos/
-          command: ls -Art | head -n 1 /tm
+          command: ls -Art /tmp/Backups_Exos/ | head -n 1
           register: certificates
 
         - name: Debug latest file
