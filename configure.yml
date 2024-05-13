@@ -1,0 +1,21 @@
+---
+- name: Generate
+  hosts: sw
+  connection: network_cli
+  gather_facts: false
+  
+  collections:
+    - community.network
+
+  tasks:
+    - name: SET VLAN
+      vars:
+        vlan_items: "{{ range(1, num_vlans + 1) | map('string') | list }}"
+      block:
+        - name: Create VLAN name 
+          community.network.exos_config:
+            lines: 
+              - "create vlan {{ lookup('vars', 'VLAN_NAME_' + item) }}
+              - "configure vlan {{ lookup('vars', 'VLAN_NAME_' + item) }} ipaddress 192.168.56.130/24" 
+          loop: "{{ vlan_items }}"
+          ignore_errors: True
