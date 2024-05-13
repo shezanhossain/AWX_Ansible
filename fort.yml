@@ -20,21 +20,15 @@
           delegate_to: localhost
 
         - name: List letencrypt certificate directory
-          shell: "{{ item }}"
-          args: 
-            chdir: /tmp/Backups_Exos
-          loop:
-            - ls -Art | head -n 1
+          command: ls -rt1 /tmp/Backups_Exos/
           register: certificates
-          delegate_to: localhost
-          run_once: true
-          
+
         - name: Debug latest file
           ansible.builtin.debug:
-            msg: "The latest configuration file is {{ certificates}}/{{inventory_hostname}}.txt"
+            msg: "The latest configuration file is {{certificates.stdout_lines[0]}}/{{inventory_hostname}}.txt"
 
         - name: Restore configuration
           community.network.exos_config:           
-            src: /tmp/Backups_Exos/{{ certificates}}/{{inventory_hostname}}.txt
+            src: /tmp/Backups_Exos/{{ certificates.stdout_lines[0] }}/sw1.txt
             diff_against: running
             save_when: modified
