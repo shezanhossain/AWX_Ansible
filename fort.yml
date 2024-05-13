@@ -21,7 +21,7 @@
           delegate_to: localhost
 
         - name: List letencrypt certificate directory
-          command: ls -tl /tmp/Backups_Exos/
+          command: ls -t1 /tmp/Backups_Exos/
           register: certificates
 
         - name: Debug latest file
