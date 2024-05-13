@@ -40,7 +40,8 @@
 
         - name: Get current date and time
   #        command: date '+%Y_%m_%d_%H_%M_%S'
-          command: date '+%H_%M_%S_%Y_%m_%d'
+  #       command: date '+%H_%M_%S_%Y_%m_%d'
+          command: "date '+%d_%B_%H_%M_%S'"
           register: datetime_result
           run_once: true
 
