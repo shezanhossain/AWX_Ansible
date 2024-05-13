@@ -80,6 +80,7 @@
             - git config --global user.email hossainmahmudshezan@gmail.com
             - git add *
             - git commit -m "{{ datetime_result.stdout }}"     
+            - git tag -a {{ datetime_result.stdout }} -m "{{ datetime_result.stdout }}"
             - git remote set-url origin https://{{token_key}}@github.com/{{user_name}}/Backups_Exos
             - git push origin master
           delegate_to: localhost
