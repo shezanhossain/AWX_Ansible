@@ -27,7 +27,8 @@
             - ls -Art | head -n 1
           register: certificates
           delegate_to: localhost
-
+          run_once: true
+          
         - name: Debug latest file
           ansible.builtin.debug:
             msg: "The latest configuration file is {{ certificates}}/{{inventory_hostname}}.txt"
