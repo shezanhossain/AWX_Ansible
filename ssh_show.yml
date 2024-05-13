@@ -1,0 +1,16 @@
+---
+- name: Generate VLAN
+  hosts: sw
+  connection: network_cli
+  gather_facts: false
+
+  collections:
+    - community.network
+
+  tasks:
+    - name: SSH connection check
+      block:
+        - name: Show config
+          community.network.exos_command:
+            commands: show config
+      any_errors_fatal: true

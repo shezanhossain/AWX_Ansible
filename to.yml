@@ -1,4 +1,3 @@
-
 ---
 - name: Generate
   hosts: all
@@ -9,9 +8,27 @@
     - community.network
 
 
-
+---
+- name: Generate
+  hosts: sw
+  connection: network_cli
+  gather_facts: false
+  
+  collections:
+    - community.network
 
   tasks:
+    - name: Remove Config
+      vars:
+        vlan_items: "{{ range(1, num_vlans + 1) | map('string') | list }}"
+      block:
+        - name: Create VLAN name 
+          community.network.exos_config:
+            lines: 
+              - "delete vlan {{ lookup('vars', 'VLAN_NAME_' + item) }}"
+          loop: "{{ vlan_items }}"
+          ignore_errors: True
+
     - name: Create a file new3_file.txt and push to GitHub
       block:
         - name: Clone the existing GitHub repository
@@ -22,22 +39,12 @@
           run_once: true
           delegate_to: localhost
 
-    - name: Get files in a folder
-      ansible.builtin.find:
-        paths: "/tmp/Backups_Exos"
-        file_type: directory
-      register: found_files
+        - name: List letencrypt certificate directory
+          command: ls -t1 /tmp/Backups_Exos/
+          register: certificates
 
-    - name: Get latest file
-      set_fact:
-        latest_file: "{{ (found_files.files | sort(attribute='mtime') | last).path }}"
-
-    - name: Debug latest file
-      ansible.builtin.debug:
-        msg: "The latest configuration file is {{ latest_file }}/sw1.txt"
-
-    - name: Restore configuration on EXOS switch
-      community.network.exos_config:
-        src: "{{ latest_file }}/sw1.txt"
-        diff_against: running
-        save_when: modified
+        - name: Restore configuration
+          community.network.exos_config:           
+            src: /tmp/Backups_Exos/{{ certificates.stdout_lines[0] }}/sw1.txt
+            diff_against: running
+            save_when: modified
