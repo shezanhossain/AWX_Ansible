@@ -19,16 +19,16 @@
           run_once: true
           delegate_to: localhost
 
-        - name: List letencrypt certificate directory
-          command: ls -rt1 /tmp/Backups_Exos/
-          register: certificates
+        - name: Get files in a folder
+          find:
+            paths: "/var/www/html/wwwroot/somefolder/"
+          register: found_files
+
+        - name: Get latest file
+          set_fact:
+            latest_file: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
 
         - name: Debug latest file
           ansible.builtin.debug:
-            msg: "The latest configuration file is {{certificates.stdout_lines[0]}}/{{inventory_hostname}}.txt"
+            msg: "The latest configuration file is {{test_file}}/{{inventory_hostname}}.txt"
 
-        - name: Restore configuration
-          community.network.exos_config:           
-            src: /tmp/Backups_Exos/{{ certificates.stdout_lines[0] }}/sw1.txt
-            diff_against: running
-            save_when: modified
