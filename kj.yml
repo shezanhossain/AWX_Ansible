@@ -1,0 +1,42 @@
+
+---
+- name: Generate
+  hosts: all
+  connection: network_cli
+  gather_facts: false
+  
+  collections:
+    - community.network
+
+
+  tasks:
+    - name: Create a file new3_file.txt and push to GitHub
+      block:
+        - name: Clone the existing GitHub repository
+          args: 
+            chdir: /tmp
+          command: git clone https://github.com/shezanhossain2/Backups_Exos.git
+
+          run_once: true
+          delegate_to: localhost
+
+    - name: Get files in a folder
+      ansible.builtin.find:
+        paths: /tmp/Backups_Exos/
+      register: found_files
+
+    - name: Get latest file
+      set_fact:
+        latest_file: "{{ found_files.files | sort(attribute='mtime', reverse=true) | first }}"
+
+    - name: Debug latest file
+      ansible.builtin.debug:
+        msg: "The latest configuration file is {{ latest_file.path }}"
+
+    - name: Restore configuration on EXOS switch
+      community.network.exos_config:
+        src: /tmp/Backups_Exos/{{ latest_file.path }}/{{inventory_hostname}}.txt
+        diff_against: running
+        save_when: modified
+ #     when: inventory_hostname == 'sw1'  # Adjust as needed for dynamic hostname handlin
+
