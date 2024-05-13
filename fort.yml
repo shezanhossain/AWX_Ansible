@@ -20,7 +20,9 @@
           delegate_to: localhost
 
         - name: List letencrypt certificate directory
-          command: ls -rt1 /tmp/Backups_Exos/
+          shell: git log --pretty=format: --name-only | grep -vE '^[[:space:]]*$' | awk -F/ '{if ($1) print $1}' | sort -u | head -n 1
+          args:
+            chdir: /tmp/Backups_Exos
           register: certificates
 
         - name: Debug latest file
