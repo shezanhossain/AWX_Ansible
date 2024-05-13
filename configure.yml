@@ -15,7 +15,5 @@
         - name: Create VLAN name 
           community.network.exos_config:
             lines: 
-              - "configure vlan {{ lookup('vars', 'VLAN_NAME_' + item) }} ipaddress 192.168.60.130/24" 
+              - "configure vlan {{ lookup('vars', 'VLAN_NAME_' + item) }} ipaddress 192.168.60.130/24"              
           loop: "{{ vlan_items }}"
-          ignore_errors: True
-
