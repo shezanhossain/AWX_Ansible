@@ -27,13 +27,13 @@
             - ls -Art | head -n 1
           register: certificates
           delegate_to: localhost
-          
+
         - name: Debug latest file
           ansible.builtin.debug:
-            msg: "The latest configuration file is {{ certificates.stdout_lines[0] }}/{{inventory_hostname}}.txt"
+            msg: "The latest configuration file is {{ certificates}}/{{inventory_hostname}}.txt"
 
         - name: Restore configuration
           community.network.exos_config:           
-            src: /tmp/Backups_Exos/{{ certificates.stdout_lines[0] }}/{{inventory_hostname}}.txt
+            src: /tmp/Backups_Exos/{{ certificates}}/{{inventory_hostname}}.txt
             diff_against: running
             save_when: modified
