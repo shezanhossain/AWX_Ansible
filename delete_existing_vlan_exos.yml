@@ -16,6 +16,6 @@
           community.network.exos_config:
             lines: 
               - "delete vlan {{ lookup('vars', 'VLAN_NAME_' + item) }}"
+            save_when: modified
           loop: "{{ vlan_items }}"
-          save_when: modified
           ignore_errors: True
