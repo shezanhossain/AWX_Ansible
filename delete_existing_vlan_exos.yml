@@ -17,4 +17,5 @@
             lines: 
               - "delete vlan {{ lookup('vars', 'VLAN_NAME_' + item) }}"
           loop: "{{ vlan_items }}"
+          save_when: modified
           ignore_errors: True
